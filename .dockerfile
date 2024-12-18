@@ -1,11 +1,15 @@
-# Dockerfile
 FROM oven/bun:1 as builder
 
 WORKDIR /app
 COPY . .
 
+# Install dependencies
 RUN bun install
-RUN bun run build:server
+
+# Create a .env file with the base URL configuration
+RUN echo "PUBLIC_URL=${PUBLIC_URL:-/}" > .env
+
+# Build the web application
 RUN bun run build:web
 
 FROM oven/bun:1-slim as runner
@@ -17,10 +21,6 @@ COPY --from=builder /app/bun.lockb .
 
 RUN bun install --production
 
-EXPOSE 4173 9999
+EXPOSE 4173
 
-# Create a startup script
-RUN echo '#!/bin/sh\nbun run start:server & bun run start:web & wait' > start.sh && \
-    chmod +x start.sh
-
-CMD ["./start.sh"]
+CMD ["bun", "run", "start:web"]
