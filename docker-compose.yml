@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  downite:
+    build: .
+    ports:
+      - "4173:4173"
+      - "9999:9999"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
