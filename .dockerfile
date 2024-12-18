@@ -1,3 +1,4 @@
+# Dockerfile
 FROM oven/bun:1 as builder
 
 WORKDIR /app
@@ -18,4 +19,8 @@ RUN bun install --production
 
 EXPOSE 4173 9999
 
-CMD ["bun", "run", "start:server"]
+# Create a startup script
+RUN echo '#!/bin/sh\nbun run start:server & bun run start:web & wait' > start.sh && \
+    chmod +x start.sh
+
+CMD ["./start.sh"]
